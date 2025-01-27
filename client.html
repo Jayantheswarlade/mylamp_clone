@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Bot</title>
+    <style>
+        #chatBox {
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #answerInput {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interview Bot</h1>
+    <input type="file" id="cvInput" accept=".pdf">
+    <br>
+    <textarea id="jdInput" rows="4" cols="50" placeholder="Paste the job description here..."></textarea>
+    <br>
+    <button id="uploadCVButton">Upload CV</button>
+    <button id="analyzeJDButton">Analyze Job Description</button>
+    <button id="startInterviewButton">Start Interview</button>
+
+    <p id="status"></p>
+
+    <div id="chatBox"></div>
+    <input type="text" id="answerInput" placeholder="Type your answer here">
+    <button id="sendAnswerButton">Send Answer</button>
+    <button id="endInterviewButton">End Interview</button>
+    <button id="CodeSendButton">Send Coding Answers</button>
+    <button id="getAnalysisButton">Get Analysis</button>
+    <button id="getSummaryAnalysis">Get Summary</button>
+    <button id="testCodingQuestion">Test Question</button>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8000/ws');
+        let cvText = '';
+        let JD = '';
+        let que = '';
+        let mediaRecorder;
+        let audioChunks = [];
+        let allowRecording = true;
+        let answerTimer;
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'cv_uploaded') {
+                document.getElementById('status').innerText = data.message;
+                cvText = data.cv_text;
+            } else if (data.type === 'jd_analyzed') {
+                document.getElementById('status').innerText = data.message;
+                JD = data.job_description;
+            } else if (data.type === 'interview_question') {
+                appendToChatBox('Interviewer: ' + data.question);
+                startRecording();
+            } else if (data.type === 'interview_end') {
+                appendToChatBox('System: ' + data.message);
+            } else if (data.type === 'coding_question') {
+                appendToChatBox("STARTED INTERVIEW");
+                appendToChatBox('System: ' + data.message);
+                que = data.message;
+            } else if (data.type === 'code_evaluation') {
+                let result = data.result;
+                if (result) {
+                    if (result["RESULT"]) {
+                        appendToChatBox('Good This is Correct');
+                    } else {
+                        appendToChatBox('Try Again Please, You Have Got it wrong');
+                    }
+                } else {
+                    appendToChatBox('Error Receiving Results Send Again');
+                }
+            } else if (data.type === 'analysis') {
+                appendToChatBox('Analysis: ' + JSON.stringify(data.result));
+            }
+        };
+
+        function appendToChatBox(message) {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += message + '<br>';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function startRecording() {
+            if (!allowRecording) return;
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                mediaRecorder.start();
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                // Start a 5-minute timer
+                answerTimer = setTimeout(() => {
+                    stopRecording();
+                    alert('Time is up. Your answer has been submitted.');
+                }, 300000); // 5 minutes in milliseconds
+            });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64Audio = reader.result.split(',')[1];
+                        socket.send(JSON.stringify({ type: 'audio', audio_data: base64Audio })); // Updated type to 'audio'
+                    };
+                    reader.readAsDataURL(audioBlob);
+                };
+            }
+            clearTimeout(answerTimer);
+            allowRecording = false;
+        }
+
+        document.getElementById('sendAnswerButton').addEventListener('click', () => {
+            const answer = document.getElementById('answerInput').value;
+            if (answer) {
+                appendToChatBox('You: ' + answer);
+                socket.send(JSON.stringify({
+                    type: 'answer',
+                    answer: answer
+                }));
+            }
+
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                stopRecording();
+            }
+            document.getElementById('answerInput').value = '';
+        });
+
+        document.getElementById('uploadCVButton').addEventListener('click', () => {
+            const fileInput = document.getElementById('cvInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                document.getElementById('status').innerText = 'Please select a CV file first!';
+                return;
+            }
+            document.getElementById('status').innerText = 'CV UPLOADED';
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const binaryData = event.target.result;
+                socket.send(JSON.stringify({
+                    type: 'upload_cv',
+                    cv_data: Array.from(new Uint8Array(binaryData))
+                }));
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById('analyzeJDButton').addEventListener('click', () => {
+            const jobDescription = document.getElementById('jdInput').value;
+
+            if (!jobDescription) {
+                document.getElementById('status').innerText = 'Please enter a job description!';
+                return;
+            }
+            document.getElementById('status').innerText = 'JD UPLOADED';
+            socket.send(JSON.stringify({
+                type: 'analyze_jd',
+                job_description: jobDescription
+            }));
+        });
+
+        document.getElementById('startInterviewButton').addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'start_interview',
+                pdf_text: cvText,
+                job_description: JD
+            }));
+            document.getElementById('status').innerText = 'Interview started!';
+        });
+
+        document.getElementById('CodeSendButton').addEventListener('click', () => {
+            const answer = document.getElementById('answerInput').value;
+            if (answer) {
+                appendToChatBox('You: ' + answer);
+                socket.send(JSON.stringify({
+                    type: 'coding',
+                    ques: que,
+                    code: answer
+                }));
+                document.getElementById('answerInput').value = '';
+            }
+        });
+
+        document.getElementById('endInterviewButton').addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'end_interview'
+            }));
+        });
+
+        document.getElementById('getAnalysisButton').addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'get_analysis'
+            }));
+        });
+
+        document.getElementById('getSummaryAnalysis').addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'get_summary_analysis'
+            }));
+        });
+
+        document.getElementById('testCodingQuestion').addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'test_coding_question'
+            }));
+        });
+    </script>
+</body>
+</html>

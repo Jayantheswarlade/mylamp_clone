@@ -1,0 +1,13 @@
+{
+    "type": "service_account",
+    "project_id": "wize-interviewer",
+    "private_key_id": "291bd001d7bae94e6345ba283a72d7eb46ac8d7a",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC4+EsJPcLw+yDL\nzEA2aTUmUzUL2W/decsHYbzg6H/fbMN73/HdpY4nd27kEsYcXnyOR3+TnImbFPku\ndUjjr2oaNJxmIJqeYNGEA3jrk1a1VmcZr7IaCCszXNNsjFWHBD81C71s5axM6Cx1\nWINLUdiIXoOecF8/aqhm1hnwipPLAMsPYJ34EhRRukJYNmHEVpVbVvYQ+V//NyEn\nMwop1fov+aEC1XgmBzn2F/IwKAwUxQLTDVz8NZXGVmjZ75U1yaX/nn9hcb3AyGbs\nOx2wt1VhRzK2MZnQ0CQEjS5dXC1IYvYzku/NUclZrLFazquoZHVjDG0jTbIFjeZL\nkswCwVMfAgMBAAECggEAIY82+gHBJTzC+gbgXZ7f/Eibdr9oGuxWiEvU24+DZ9OR\nch+y/85iSMnUDkBTvmDsQ1o4jN0ZYFBBV4sDAwBYBVInUCY5N2QEj2mb3k34rOT0\nxsXIUA3MXMDKQUcC24DLQQIUx7Wx+bAkJNQ+2gMLAM75HV1xAo4E6MeOpERYRTvc\nDBDiaZfgYrYvEe0XkfReOWFgwwb6EI2rvWzmv7whNDRaUbDhzZdh7LClD+cD0JL9\n09GuOO1M9NGbcrlEHkKcZA4N12LDfzxzhvca8k7hnaGPzV8TyqTY6fKphCM9ZPvZ\nNdS3/7q35IyrGjcFvuK58BK9pjdgUyp6R5kuZbEQSQKBgQDkwv2WYdthEyyJOiJl\neq3loQe14Kfp9uur3gVY+0KM7gC1FeigWGRpbU9mhQ/howDMK7PZ0S+zk/OXqAqf\niUjhsNwPLR4VTkxIQyVdgmmPFRFFlHS+SD4TKlWoA+adyW22zRBrvxLutsDa5SNl\nQRj5SPdXnrwvWkQwrnHD5WzV+QKBgQDO/nYSvVwAQSg/RGtMthWUjURdRwxsfno8\nbzJySlzZnueL6ZVuoXwzV/7RFxNOYC5IOeGZ7vnUVD2AEwQbHRPNIZzcOz8RONGD\nE8XjSX0nDWTGzKeSZFq+aJH7pefv1kGOSuC732yfrpxQba3F+DDjdcCbbF5NCZe5\nSzLANTJX1wKBgGrvBzFDvxPqrZfcF/YN2boMgxku0e8ZIGMvnppQoXRVUPlVK2/A\nwfdSRJpsutbDpnzKNQEturmcAHM09vpKZ0owrT1e3sAg4KGq2Y2Th5p9w5wd4FCO\nXo4A7Rdj82pwnRulUfa707LItO/dyqTrQCxPQmev6NHNxTBoav+igDSpAoGBAMej\nVG2uhFUagp7Cdlp+I0IrHYx5QdpCAdLXzGe+oN6jC989YgpZZVh/vhwbjVtCGGFA\nsf2tJvdKaCZmMMeVu8tUZ91gpusNScSKBYm5DyPjHxc9u0DN2Vdbs7BpytDebEu4\nnBeW3UUFO2222qrdPQmkQCem1Syn29WyWThYFj3xAoGBAIO1VEcW//rpXyWcooQ5\nW2TpIYLfPfp849r/79XoyoK36+RbM7gpJ8g1X5EMdD9ngMSGlxOlvDl8eYYM4FFu\nAS7n685pPy5TK8ZSPjDGlv4UbQXDBnIsZW6FVpOmfat9b7uFhIousSzhsajW71kA\nEWF4XNy6gqWIsoifeRC8uPUM\n-----END PRIVATE KEY-----\n",
+    "client_email": "penguin@wize-interviewer.iam.gserviceaccount.com",
+    "client_id": "111208308431082926532",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/penguin%40wize-interviewer.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
